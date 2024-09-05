@@ -32,5 +32,4 @@ with
         left join orders on customer.customer_id = orders.user_id
         left join payment on orders.id = payment.order_id
     )
-select *
-from final
+
