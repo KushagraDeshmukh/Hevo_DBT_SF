@@ -1,0 +1,52 @@
+12:41:44 Began running node model.my_new_project.customers
+12:41:44 1 of 1 START sql table model dbt_kdeshmukh.customers ........................... [RUN]
+12:41:44 Began compiling node model.my_new_project.customers
+12:41:44 Writing injected SQL for node "model.my_new_project.customers"
+12:41:44 Began executing node model.my_new_project.customers
+12:41:44 Writing runtime sql for node "model.my_new_project.customers"
+12:41:44 Using snowflake connection "model.my_new_project.customers"
+12:41:44 On model.my_new_project.customers: /* {"app": "dbt", "dbt_version": "2024.9.236", "profile_name": "user", "target_name": "default", "node_id": "model.my_new_project.customers"} */
+create or replace transient table HEVO.dbt_kdeshmukh.customers
+         as
+        (with
+    customer as (
+        select id as customer_id, first_name, last_name from HEVO.dbt_kdeshmukh.customer
+    ),
+    orders as (
+        select
+            id,
+            user_id,
+            min(order_date) as most_recent_orders,
+            max(order_date) as number_of_orders
+        from HEVO.dbt_kdeshmukh.orders
+        group by all
+    ),
+    payment as (
+        select id, order_id, payment_method, sum(amount) as customer_lifetime_value
+        from HEVO.dbt_kdeshmukh.payment
+        group by all
+    ),
+    final as (
+        select
+            customer.customer_id,
+            customer.first_name,
+            customer.last_name,
+            orders.id,
+            orders.user_id,
+            orders.most_recent_orders,
+            orders.number_of_orders,
+            payment.id as payment_id,
+            payment.order_id,
+            payment.customer_lifetime_value
+        from customer
+        left join orders on customer.customer_id = orders.user_id
+        left join payment on orders.id = payment.order_id
+    )
+select *
+from final
+        );
+12:41:44 Opening a new connection, currently in state closed
+12:41:45 SQL status: SUCCESS 1 in 1.635 seconds
+12:41:45 On model.my_new_project.customers: Close
+12:41:46 1 of 1 OK created sql table model dbt_kdeshmukh.customers ...................... [[32mSUCCESS 1[0m in 2.05s]
+12:41:46 Finished running node model.my_new_project.customers
