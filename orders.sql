@@ -1,0 +1,1 @@
+select * from {{ source('Snowflake', 'HEVO_RAW_ORDERS') }}
