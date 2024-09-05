@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: Snowflake
+    database: HEVO  
+    schema: PUBLIC  
+    tables:
+      - name: HEVO_RAW_CUSTOMERS
+      - name: HEVO_RAW_ORDERS
+      - name: HEVO_RAW_PAYMENTS
